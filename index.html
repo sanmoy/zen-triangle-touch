@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #rotate-prompt {
+                display: none; /* Hidden by default, JavaScript will show it */
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background-color: rgba(0, 0, 0, 0.9);
+                color: white;
+                font-family: sans-serif;
+                font-size: 2em;
+                text-align: center;
+                display: flex; /* Use flexbox for centering content */
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999; /* Ensure it's on top of everything else */
+            }
+
+            #rotate-prompt img {
+                width: 150px; /* Adjust size as needed */
+                height: 150px;
+                margin-top: 20px;
+                /* Simple rotation animation for the icon */
+                animation: rotateAnimation 1.5s infinite alternate;
+            }
+
+            @keyframes rotateAnimation {
+                from {
+                    transform: rotate(0deg);
+                }
+                to {
+                    transform: rotate(-90deg);
+                }
+            }
+        </style>
+
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, viewport-fit=cover" />
+        <link rel="manifest" href="manifest.json">
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
+		<link rel="stylesheet" type="text/css" href="css/page.css" />
+		<link rel="stylesheet" type="text/css" href="css/zen.css" />
+		<script type="text/javascript" src="js/index.js"></script>
+		<script type="text/javascript" src="js/element.js"></script>
+        <script type="text/javascript" src="js/handle.js"></script>
+		<script type="text/javascript" src="js/stages.js"></script>
+		<script type="text/javascript" src="js/solutions.js"></script>
+        <title>Zen-Triangle</title>
+    </head>
+    <body onkeypress="keyHandler(event)">
+
+    <div id="rotate-prompt">
+        <p>Please rotate your device to landscape mode for the best experience!</p>
+        <img src="img/rotate-device.png" alt="Rotate device icon">
+    </div>
+
+    <script>
+        const rotatePrompt = document.getElementById('rotate-prompt');
+        // Retrieve state from sessionStorage, default to false if not found
+        // let appInitialized = sessionStorage.getItem('appInitialized') === 'true';
+        let appInitialized = false;
+        // let browserReloadedForOrientation = sessionStorage.getItem('browserReloadedForOrientation') === 'true';
+
+        function showRotatePrompt() {
+            rotatePrompt.style.display = 'flex';
+        }
+
+        function hideRotatePrompt() {
+            rotatePrompt.style.display = 'none';
+        }
+
+        // Your specific main() and keyHandler() functions
+        // function main1() {
+        //     if (!appInitialized) { // Check the persisted flag
+        //         console.log("main() function called!");
+        //         //alert("main() function called! Your application should start now.");
+        //         // YOUR MAIN APPLICATION INITIALIZATION CODE GOES HERE
+        //         sessionStorage.setItem('appInitialized', 'true'); // Persist the state
+        //         appInitialized = true; // Update local variable
+		// 		main();
+        //     }
+        // }
+
+        // function keyHandler(event) {
+        //     console.log("Key pressed:", event.key);
+        //     // Your key handling logic here
+        // }
+
+        // --- Orientation Detection and Logic ---
+        const portraitMediaQuery = window.matchMedia("(orientation: portrait)");
+
+        function handleOrientationChange(event) {
+            if (event.matches) {
+                // Device is in portrait mode
+                console.log("Orientation changed to portrait. Showing rotation prompt.");
+                showRotatePrompt();
+                // When we go back to portrait, reset flags in sessionStorage for next time
+                // sessionStorage.setItem('appInitialized', 'false');
+                // appInitialized = false;
+                // sessionStorage.setItem('browserReloadedForOrientation', 'false');
+                // browserReloadedForOrientation = false;
+                if (bckgrnd && !bckgrnd.paused) { // Check if audio object exists and is currently playing
+                    bckgrnd.pause();
+                }
+            } else {
+                // Device is in landscape mode
+                console.log("Orientation changed to landscape.");
+                hideRotatePrompt();
+                playLoop();
+
+                // If the app hasn't been initialized AND we haven't just reloaded for orientation
+                // if (!appInitialized && !browserReloadedForOrientation) {
+                //     // Force Reload (if needed for fresh state)
+                //     console.log("Device rotated to landscape. Forcing page reload...");
+                //     sessionStorage.setItem('browserReloadedForOrientation', 'true'); // Set flag before reload
+                //     window.location.reload();
+                //     // IMPORTANT: The execution stops here. The rest of the function will NOT run.
+                //     // The new page load will pick up from the 'DOMContentLoaded' listener.
+                //     return;
+                // } else if (browserReloadedForOrientation && !appInitialized) {
+                //     // This block runs immediately after the reload if it was initiated for orientation
+                //     // We're now in landscape after a reload, so proceed to call main()
+                //     console.log("Page reloaded into landscape. Calling main().");
+                //     sessionStorage.setItem('browserReloadedForOrientation', 'false'); // Reset the reload flag
+                //     browserReloadedForOrientation = false; // Reset local variable
+                //     main1(); // Call main function
+                // }
+                // If appInitialized is true and we're in landscape, do nothing (app is already running)
+                if (!appInitialized ){
+                    console.log("Device rotated to landscape. Calling main().");
+                    appInitialized = true; // Set the flag to true
+                    // main();
+                    setTimeout(main, 1000);
+                }
+                
+            }
+        }
+
+        // Initial check and event listener setup when the DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initial orientation check
+            handleOrientationChange(portraitMediaQuery);
+
+            // Listen for future orientation changes
+            portraitMediaQuery.addEventListener("change", handleOrientationChange);
+
+            // Additional check for cases where the page loaded directly into landscape
+            // and main() should be called immediately without prompt or reload.
+            if (!portraitMediaQuery.matches && !appInitialized) {
+                // main();
+                setTimeout(main, 1000);
+                appInitialized = true;
+            }
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+            navigator.serviceWorker.register('sw.js');
+            });
+        }
+
+    </script>
+</body>
+</html>
