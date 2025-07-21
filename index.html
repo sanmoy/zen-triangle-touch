@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-0FL4KNG3EN"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-0FL4KNG3EN');
+        </script>
         <style>
             #rotate-prompt {
                 display: none; /* Hidden by default, JavaScript will show it */
@@ -47,12 +55,21 @@
 		<link rel="stylesheet" type="text/css" href="css/buttons.css" />
 		<link rel="stylesheet" type="text/css" href="css/page.css" />
 		<link rel="stylesheet" type="text/css" href="css/zen.css" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/philfung/add-to-homescreen@3.3/dist/add-to-homescreen.min.css" />
+
+        <link rel="apple-touch-startup-image" href="img/launch-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+        <link rel="apple-touch-startup-image" href="img/launch-2436x1125.png" media="(device-width: 812px) and (device-height: 375px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)">
+        <link rel="apple-touch-startup-image" href="img/launch-1242x2688.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+        <link rel="apple-touch-startup-image" href="img/launch-2688x1242.png" media="(device-width: 896px) and (device-height: 414px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)">
+
 		<script type="text/javascript" src="js/index.js"></script>
 		<script type="text/javascript" src="js/element.js"></script>
         <script type="text/javascript" src="js/handle.js"></script>
 		<script type="text/javascript" src="js/stages.js"></script>
 		<script type="text/javascript" src="js/solutions.js"></script>
-        <title>Zen-Triangle</title>
+        <!-- <script src="https://cdn.jsdelivr.net/gh/philfung/add-to-homescreen@3.3/dist/add-to-homescreen.min.js"></script> -->
+        <script type="text/javascript" src="js/add-to-homescreen.min.js"></script>
+        <title>Zen Triangle: Play on Phone or Tablet</title>
     </head>
     <body onkeypress="keyHandler(event)">
 
@@ -63,10 +80,7 @@
 
     <script>
         const rotatePrompt = document.getElementById('rotate-prompt');
-        // Retrieve state from sessionStorage, default to false if not found
-        // let appInitialized = sessionStorage.getItem('appInitialized') === 'true';
         let appInitialized = false;
-        // let browserReloadedForOrientation = sessionStorage.getItem('browserReloadedForOrientation') === 'true';
 
         function showRotatePrompt() {
             rotatePrompt.style.display = 'flex';
@@ -76,23 +90,6 @@
             rotatePrompt.style.display = 'none';
         }
 
-        // Your specific main() and keyHandler() functions
-        // function main1() {
-        //     if (!appInitialized) { // Check the persisted flag
-        //         console.log("main() function called!");
-        //         //alert("main() function called! Your application should start now.");
-        //         // YOUR MAIN APPLICATION INITIALIZATION CODE GOES HERE
-        //         sessionStorage.setItem('appInitialized', 'true'); // Persist the state
-        //         appInitialized = true; // Update local variable
-		// 		main();
-        //     }
-        // }
-
-        // function keyHandler(event) {
-        //     console.log("Key pressed:", event.key);
-        //     // Your key handling logic here
-        // }
-
         // --- Orientation Detection and Logic ---
         const portraitMediaQuery = window.matchMedia("(orientation: portrait)");
 
@@ -101,13 +98,11 @@
                 // Device is in portrait mode
                 console.log("Orientation changed to portrait. Showing rotation prompt.");
                 showRotatePrompt();
-                // When we go back to portrait, reset flags in sessionStorage for next time
-                // sessionStorage.setItem('appInitialized', 'false');
-                // appInitialized = false;
-                // sessionStorage.setItem('browserReloadedForOrientation', 'false');
-                // browserReloadedForOrientation = false;
                 if (bckgrnd && !bckgrnd.paused) { // Check if audio object exists and is currently playing
                     bckgrnd.pause();
+                }
+                if (window.AddToHomeScreenInstance) {
+                    window.AddToHomeScreenInstance.closeModal();
                 }
             } else {
                 // Device is in landscape mode
@@ -115,23 +110,6 @@
                 hideRotatePrompt();
                 playLoop();
 
-                // If the app hasn't been initialized AND we haven't just reloaded for orientation
-                // if (!appInitialized && !browserReloadedForOrientation) {
-                //     // Force Reload (if needed for fresh state)
-                //     console.log("Device rotated to landscape. Forcing page reload...");
-                //     sessionStorage.setItem('browserReloadedForOrientation', 'true'); // Set flag before reload
-                //     window.location.reload();
-                //     // IMPORTANT: The execution stops here. The rest of the function will NOT run.
-                //     // The new page load will pick up from the 'DOMContentLoaded' listener.
-                //     return;
-                // } else if (browserReloadedForOrientation && !appInitialized) {
-                //     // This block runs immediately after the reload if it was initiated for orientation
-                //     // We're now in landscape after a reload, so proceed to call main()
-                //     console.log("Page reloaded into landscape. Calling main().");
-                //     sessionStorage.setItem('browserReloadedForOrientation', 'false'); // Reset the reload flag
-                //     browserReloadedForOrientation = false; // Reset local variable
-                //     main1(); // Call main function
-                // }
                 // If appInitialized is true and we're in landscape, do nothing (app is already running)
                 if (!appInitialized ){
                     console.log("Device rotated to landscape. Calling main().");
@@ -158,6 +136,27 @@
                 setTimeout(main, 1000);
                 appInitialized = true;
             }
+
+            // var iPad = /iPad/i.test(navigator.userAgent);
+
+            window.AddToHomeScreenInstance = window.AddToHomeScreen({
+            appName: 'Zen Triangle',                                   // Name of the app.
+                                                                    // Required.
+            appNameDisplay: 'standalone',                          // If set to 'standalone' (the default), the app name will be diplayed
+                                                                    // on it's own, beneath the "Install App" header. If set to 'inline', the
+                                                                    // app name will be displayed on a single line like "Install MyApp"
+                                                                    // Optional. Default 'standalone'
+            appIconUrl: 'img/icon_192.png',                    // App icon link (square, at least 40 x 40 pixels).
+                                                                    // Required.
+            assetUrl: 'https://cdn.jsdelivr.net/gh/philfung/add-to-homescreen@3.3/dist/assets/img/',  // Link to directory of library image assets.
+
+            maxModalDisplayCount: -1,                              // If set, the modal will only show this many times.
+                                                                    // [Optional] Default: -1 (no limit).  (Debugging: Use this.clearModalDisplayCount() to reset the count)
+            displayOptions:{ showMobile: true, showDesktop: false }, // show on mobile/desktop [Optional] Default: show everywhere
+            allowClose: true, // allow the user to close the modal by tapping outside of it [Optional. Default: true]
+            showArrow: true, // show the bouncing arrow on the modal [Optional. Default: true] (highly recommend leaving at true as drastically affects install rates)
+            });
+
         });
 
         if ('serviceWorker' in navigator) {

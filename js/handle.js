@@ -56,6 +56,8 @@ var clickAudio2 = new Audio("./res/click.mp3");
 var succAudio1 = new Audio("./res/succ1.mp3");
 var succAudio2 = new Audio("./res/succ2.mp3");
 
+var firstPlay = true;
+
 var userAgent = window.navigator.userAgent.toLowerCase();
 var ipad = /ipad/.test(userAgent);
 
@@ -63,7 +65,8 @@ var struggleCount = 0;
 var struggle = false;
 var info = "";
 
-firstMove = true;
+var firstMove = true;
+var stageStartTime; // To store the start time of a stage
 
 //this is to check whether the current flow is from tutorial
 var fromTutorial = false;
@@ -78,6 +81,7 @@ function main() {
     // promptWeeklyChallengeDialog();
     storePreference("lastPlayedTime", Date.now());
    setTimeout(showMainMenu, 300);
+   showAddToHomeScreenButton();
 }
 
 // function promptWeeklyChallengeDialog()
@@ -437,6 +441,8 @@ function helpAction() {
         glasses = "";
         var help_div = document.getElementById("help");
         hidemainMenu();
+        setTimeout(hideInstallButton, 400);
+        setTimeout(hideAddtoHomeButton, 400);
 //        showHelp();
 //        setTimeout(hidemainMenu, 400);
         setTimeout(showHelp, 400);
@@ -1312,11 +1318,23 @@ function nGameAction() {
 //        return;
         //setTimeout(registerNotification, 3000);
         //setTimeout(productRequest, 1000);
+        if(firstPlay === true)
+        {
+            firstPlay = false;
+            succAudio1.muted = true;
+            succAudio2.muted = true;
+            succAudio1.play();
+            succAudio2.play();
+            succAudio1.muted = false;
+            succAudio2.muted = false;
+        }
         disableEvents();
 		stopAnimation();
         glasses = "";
         var ngame_div = document.getElementById("ngame");
         hidemainMenu();
+        setTimeout(hideInstallButton, 400);
+        setTimeout(hideAddtoHomeButton, 400);
         var skipTutorial = getPreference("skipTutorial");
         if (skipTutorial === "true") 
 		{
@@ -1972,10 +1990,22 @@ function playSound(type) {
             if(rand>1)
             {
                 succAudio1.play();
+                // succAudio1.play().then(() => {
+                //     alert("my_sound.mp3 started playing successfully.");
+                // }).catch(error => {
+                //     alert("Failed to play my_sound.mp3:" + error);
+                //     // Handle autoplay policy issues or other play failures here
+                // });
             }
             else
             {
                 succAudio2.play();
+                // succAudio2.play().then(() => {
+                //     alert("my_sound.mp3 started playing successfully.");
+                // }).catch(error => {
+                //     alert("Failed to play my_sound.mp3:" + error);
+                //     // Handle autoplay policy issues or other play failures here
+                // });
             }
         }
     }
@@ -2348,6 +2378,12 @@ function initRandomStage(stageNumber)
 function init(stageNumber) {
     glasses = "ingameplay";
 
+    stageStartTime = Date.now(); // Record current timestamp in milliseconds
+    gtag('event', 'stage_started', {
+        'stage_number': stageNumber,
+        'game_name': 'Zen Triangle'
+    });
+
     showCanvases();
     drawTriangle();
 
@@ -2411,6 +2447,25 @@ function enableTutorial() {
     {
         storePreference("skipTutorial", "false");
         storePreference("lastPlayedGame", 1);
+    }
+}
+
+
+function hideInstallButton() {
+    var backContainer = document.getElementById('installContainer');
+    if (backContainer) {
+        backContainer.style.visibility = "hidden";
+        // setTimeout(function(){banner_box.style.visibility="hidden";},400);
+        // banner_box.style.opacity="0";
+    }
+}
+
+function hideAddtoHomeButton() {
+    var backContainer = document.getElementById('addToHomeContainer');
+    if (backContainer) {
+        backContainer.style.visibility = "hidden";
+        // setTimeout(function(){banner_box.style.visibility="hidden";},400);
+        // banner_box.style.opacity="0";
     }
 }
 
@@ -3030,7 +3085,7 @@ function deselect(e) {
 }
 
 function move(x, y) {
-    console.log("move called "+x+":"+y);
+    // console.log("move called "+x+":"+y);
     currentx = x;
     currenty = y;
     if (isSelect && topElement) {
