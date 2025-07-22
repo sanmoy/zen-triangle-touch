@@ -3,17 +3,12 @@ function loadGame(gameNumber) {
 //    showAppiraterDialog();
     var lastPlayedGame = getPreference("lastPlayedGame");
     lastPlayedGame = parseInt(lastPlayedGame);
-    if(gameNumber<=lastPlayedGame)
+    
+    if(gameNumber == 41 || gameNumber == 61 || gameNumber == 70 || gameNumber == 80 || gameNumber == 90)
     {
-        if(gameNumber == 52 || gameNumber == 60 || gameNumber == 70 || gameNumber == 80 || gameNumber == 90 || gameNumber == 100)
-        {
-            //showAppiraterDialog();
-        }
+        showPromptRateDialog();
     }
-    // if(gameNumber>0)
-    // {
-    //     setTimeout(registerNotification, 3000);
-    // }
+    
     storePreference("gameNumber", gameNumber);
     //resetting all params before load a stage
     if (elementArray.length < 12) {

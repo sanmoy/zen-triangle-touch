@@ -1321,12 +1321,17 @@ function nGameAction() {
         if(firstPlay === true)
         {
             firstPlay = false;
-            succAudio1.muted = true;
-            succAudio2.muted = true;
-            succAudio1.play();
-            succAudio2.play();
-            succAudio1.muted = false;
-            succAudio2.muted = false;
+
+            // muted = true does not operate on iOS
+            // succAudio1.muted = true;
+            // succAudio2.muted = true;
+            var haptics = getPreference("haptics");
+            if (haptics === "true") {
+                succAudio1.play();
+                succAudio2.play();
+            }
+            // succAudio1.muted = false;
+            // succAudio2.muted = false;
         }
         disableEvents();
 		stopAnimation();

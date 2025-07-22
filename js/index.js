@@ -403,20 +403,21 @@ function createPromptRateDialog() {
 
 function rateZenTriangle() {
     storePreference("promptRate", "false");
+    window.open('https://chrome.google.com/webstore/detail/zen-triangle/mdcomemenjfgfkejfgghafldplfldeld/reviews');
     //window.location  = 'ios:rate';
     hidePromptRateDialog();
-    showCongoDialog();
+    //showCongoDialog();
 }
 
 function remindMeLater() {
     hidePromptRateDialog();
-    showCongoDialog();
+    //showCongoDialog();
 }
 
 function noThanks() {
     storePreference("promptRate", "false");
     hidePromptRateDialog();
-    showCongoDialog();
+    //showCongoDialog();
 }
 
 // function showAppiraterDialog() {
@@ -424,7 +425,11 @@ function noThanks() {
 // }
 
 function showPromptRateDialog() {
-    glasses = "promptrate";
+    var promptRate = getPreference("promptRate");
+    if (promptRate === "false") {
+        return;
+    }
+    // glasses = "promptrate";
     var promptRateDialog = document.getElementById("promptratedialog");
     if (promptRateDialog) {        
         promptRateDialog.style.visibility = "visible";
