@@ -161,6 +161,19 @@ function initButton() {
     setTimeout(startAnimation, 200);
     animref = setTimeout(stopAnimation, 10000);
     //playLoop();
+
+    //change the size of the install button if present
+    var installContainer = document.getElementById('installContainer');
+    if (installContainer) {
+        installContainer.style.width = Math.round(4 * calib) + "px";
+        installContainer.style.height = Math.round(1.2 * calib) + "px";
+
+        installButton = document.getElementById('installButton');
+        installButton.style.width = 4 * calib + "px";
+        installButton.style.height = Math.round(1.2 * calib) + "px";
+
+        installContainer.style.visibility = "visible";
+    }
 }
 
 function getRandomString() {

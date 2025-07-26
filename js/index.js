@@ -438,7 +438,7 @@ function showPromptRateDialog() {
 }
 
 function hidePromptRateDialog() {
-    glasses = "congo";
+    // glasses = "congo";
     var confirm = document.getElementById("promptratedialog");
     if (confirm) {
         confirm.style.visibility = "hidden";
@@ -939,8 +939,9 @@ window.addEventListener('beforeinstallprompt', (e) => {
         //        installButton.style.zIndex = "5";
         installContainer.appendChild(installButton);
         document.body.insertBefore(installContainer, document.body.firstChild);
-        installContainer.style.visibility = "visible";
-
+        // Initially hide the install button
+        installContainer.style.visibility = "hidden";
+        
         addEvent("installButton", installAppAction);
     }
 });
@@ -960,12 +961,11 @@ function installAppAction()
             // and desktopInstallButton.style.display = 'none';
             // should also go here or in a function called from here.
             deferredPrompt = null;
-            const installButton = document.getElementById('installButton');
-            
+            var installContainer = document.getElementById('installContainer');
 
             if (outcome === 'accepted') {
-                if (installButton) {
-                    installButton.style.display = 'none';
+                if (installContainer) {
+                    installContainer.style.display = 'none';
                 }
                 console.log('User accepted the PWA install.');
             } else {
